@@ -50,3 +50,20 @@ def lora_data_receiver(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
             
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=405)
+
+
+def lora_data_list(request):
+    records = LoraRecord.objects.all().order_by('-timestamp')[:20]
+    data = []
+    for r in records:
+        data.append({
+            "id": r.id,
+            "count": r.count,
+            "gps_status": r.gps_status,
+            "latitude": r.latitude,
+            "longitude": r.longitude,
+            "rssi": r.rssi,
+            "snr": r.snr,
+            "timestamp": r.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        })
+    return JsonResponse({"records": data})
